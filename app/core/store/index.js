@@ -14,7 +14,7 @@ function getStore( initialState ) {
 }
 
 const initialState = {
-
+	stories: []
 };
 
 export default getStore( initialState );
