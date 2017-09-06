@@ -14,7 +14,9 @@ function getStore( initialState ) {
 }
 
 const initialState = {
-	stories: []
+	currentView: 'StoryList',
+	stories: [],
+	storyBeingRead: {},
 };
 
 export default getStore( initialState );

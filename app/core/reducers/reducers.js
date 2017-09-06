@@ -3,6 +3,12 @@ const _ = require( 'lodash' );
 import createReducer from '../lib/createReducer';
 import * as types from '../actions/types';
 
+export const currentView = createReducer( {}, {
+	[ types.SET_CURRENT_VIEW ]( state, action ) {
+		return action.payload.view;
+	}
+} );
+
 export const stories = createReducer( {}, {
 	[ types.SET_STORIES ]( state, action ) {
 		return _.map( action.payload.stories, ( story ) => {
@@ -28,11 +34,22 @@ export const storyBeingRead = createReducer( {}, {
 		return _.find( action.payload.stories, { id: action.payload.storyIdToRead } );
 	},
 	[ types.SET_CHAPTER ]( state, action ) {
-		let chapter = action.payload.chapter;
+		let allChapters = state.chapters;
+		let thisChapter = {
+			id: action.payload.chapter.id,
+			name: action.payload.chapter.name,
+			text: action.payload.chapter.text,
+			chapterNumber: action.payload.chapter.chapter_number
+		};
+		allChapters.push( thisChapter );
 
+		let currentState = Object.assign( {}, state );
+		currentState.chapters = allChapters;
+
+		console.log( "set next chapter: " + allChapters.length );
 		return {
 			...state,
-			chapters: state.chapters.concat( chapter )
-		}
+			chapters: allChapters
+		};
 	}
 } );

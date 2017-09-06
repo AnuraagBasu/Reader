@@ -10,7 +10,8 @@ import { bindActionCreators } from 'redux';
 
 import { ActionCreators } from '../../core/actions';
 
-import StoryPreview from '../components/StoryPreview';
+import StoryList from './StoryList';
+import Story from './Story';
 
 const _ = require( 'lodash' );
 
@@ -19,19 +20,8 @@ class Root extends Component {
 		super( props );
 	}
 
-	_getStories() {
-		return _.map( this.props.stories, ( story ) => {
-			return (
-				<TouchableOpacity key={'story_' + story.id} style={{ flex: 1, marginBottom: 10 }}
-					activeOpacity={0.9} onPress={this._storyToReadSelected.bind( this, story.id )}>
-					<StoryPreview title={story.title} cover={story.cover} authorName={story.author.name} teaser={story.teaser} />
-				</TouchableOpacity>
-			);
-		} );
-	}
-
-	_storyToReadSelected( storyId ) {
-		this.props.setStoryToRead( storyId );
+	_setStoryToRead( storyId ) {
+		this.props.startReading( storyId );
 	}
 
 	componentWillMount() {
@@ -39,11 +29,24 @@ class Root extends Component {
 	}
 
 	render() {
+		let screen;
+		switch ( this.props.currentView ) {
+			case 'StoryList':
+				screen = (
+					<StoryList {...this.props} onStorySelect={this._setStoryToRead.bind( this )} />
+				);
+				break;
+
+			case 'Story':
+				screen = (
+					<Story {...this.props} />
+				);
+				break;
+		}
+
 		return (
 			<View style={{ flex: 1, backgroundColor: '#424242' }}>
-				<ScrollView style={{ flex: 1, padding: 10 }}>
-					{this._getStories()}
-				</ScrollView>
+				{screen}
 			</View>
 		)
 	}
@@ -55,7 +58,7 @@ function mapDispatchToProps( dispatch ) {
 
 function mapStateToProps( state ) {
 	return {
-		stories: state.stories
+		currentView: state.currentView
 	};
 }
 

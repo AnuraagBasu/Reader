@@ -1,3 +1,5 @@
+export const SET_CURRENT_VIEW = "SET_CURRENT_VIEW";
+
 export const SET_STORIES = "SET_STORIES";
 export const SET_STORY_BEING_READ = "SET_STORY_BEING_READ";
 export const SET_CHAPTER = "SET_CHAPTER";
