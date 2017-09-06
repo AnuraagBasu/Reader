@@ -12,11 +12,13 @@ export function changeCurrentView( nextView ) {
 
 export function fetchStories() {
 	return ( dispatch, getState ) => {
+		dispatch({
+			type: types.FETCH_STORIES_IN_PROGRESS
+		});
+
 		return fetch( URLs.stories() )
 			.then( resp => resp.json() )
 			.then( resp => {
-				console.log( "response is : " + JSON.stringify( resp ) );
-
 				if ( resp.response && resp.response.length ) {
 					return dispatch( setStories( resp.response ) );
 				}
@@ -37,8 +39,11 @@ export function startReading( storyId ) {
 }
 
 export function fetchNextChapter( storyId, chapterId ) {
-	console.log( "fetch next chapter" );
 	return ( dispatch, action ) => {
+		dispatch({
+			type: types.FETCH_CHAPTERS_IN_PROGRESS
+		});
+
 		return fetch( URLs.chapter( storyId, chapterId ) )
 			.then( resp => resp.json() )
 			.then( resp => {

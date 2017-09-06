@@ -17,6 +17,8 @@ const initialState = {
 	currentView: 'StoryList',
 	stories: [],
 	storyBeingRead: {},
+	storiesLoading: true,
+	chapterLoading: true
 };
 
 export default getStore( initialState );

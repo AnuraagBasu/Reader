@@ -54,3 +54,21 @@ export const storyBeingRead = createReducer( {}, {
 		};
 	}
 } );
+
+export const storiesLoading = createReducer({}, {
+	[types.FETCH_STORIES_IN_PROGRESS](state, action) {
+		return true;
+	},
+	[types.SET_STORIES](state, action) {
+		return false;
+	}
+});
+
+export const chapterLoading = createReducer({}, {
+	[types.FETCH_CHAPTERS_IN_PROGRESS](state, action) {
+		return true;
+	},
+	[types.SET_CHAPTER](state, action) {
+		return false;
+	}
+});

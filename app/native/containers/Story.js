@@ -4,6 +4,7 @@ import {
 	Text,
 	Image,
 	ScrollView,
+	Dimensions
 } from 'react-native';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
@@ -29,42 +30,44 @@ class Story extends Component {
 		};
 	}
 
-	_getNextChapter() {
-		this.props.getNextChapter();
-	}
-
 	_renderChapters() {
-		return _.map( this.props.chapters, ( chapter ) => {
+		let chaptersToRender =  _.map( this.props.chapters, ( chapter ) => {
 			return (
-				<View key={'chapter_' + chapter.chapterNumber} style={[ Styles.allCenter ]}>
+				<View key={'chapter_' + chapter.chapterNumber} style={[ Styles.allCenter, Styles.chapterContainer ]}>
 					<Text style={[ Styles.text, Styles.chapterName ]}>{chapter.name}</Text>
 					<Chapter text={chapter.text}/>
 				</View>
 			);
 		} );
-	}
 
-	_fetchNextChapter() {
-		if ( this.props.chapters.length < this.props.totalNumberOfChapters ) {
-			this.props.fetchNextChapter( this.props.storyId, this.props.chapters.length + 1 );
+		if (this.props.chapterLoading) {
+			chaptersToRender.push(
+				<View key={'chapter_loading'} style={[Styles.allCenter, Styles.chapterContainer]}>
+					<Text style={[Styles.text, Styles.smallText]}>loading next chapter...</Text>
+				</View>
+			)
 		}
+
+		return chaptersToRender;
 	}
 
 	_whileReadingStory( { nativeEvent } ) {
 		const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-		const paddingToBottom = 100;
-		if ( layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom ) {
+		let windowHeight = Dimensions.get('window').height;
+		const paddingToBottom = 500;
+		if ( (windowHeight + contentOffset.y) >= (contentSize.height - paddingToBottom) ) {
 			console.log( "while reading reached end:" );
+			this.props.onChapterReadingEnd();
 		}
 	}
 
 	render() {
-		console.log("cover url: " + this.props.cover)
 		return (
 			<Animatable.View animation={this.zoomAnimation} duration={400} style={[ Styles.flexOne, Styles.allCenter ]}>
 
-				<ScrollView style={[ Styles.flexOne ]} contentContainerStyle={[ Styles.storyContainer ]}
-					showsVerticalScrollIndicator={false} onScroll={this._whileReadingStory.bind( this )}>
+				<ScrollView style={[ Styles.flexOne ]} contentContainerStyle={[ Styles.storyContainer ]} 
+					showsVerticalScrollIndicator={false} bounces={false}
+					onScroll={this._whileReadingStory.bind( this )}>
 					
 					<View style={[Styles.storyInfoContainer, Styles.allCenter]}>
 						<Image source={{uri: this.props.cover}} style={[Styles.storyImage]}/>
@@ -88,7 +91,8 @@ function mapStateToProps( state ) {
 		title: state.storyBeingRead.title,
 		authorName: state.storyBeingRead.author.name,
 		totalNumberOfChapters: state.storyBeingRead.chaptersCount,
-		chapters: state.storyBeingRead.chapters
+		chapters: state.storyBeingRead.chapters,
+		chapterLoading: state.chapterLoading
 	};
 }
 

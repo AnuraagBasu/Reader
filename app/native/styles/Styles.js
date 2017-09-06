@@ -66,6 +66,9 @@ export default Styles = StyleSheet.create( {
 	chaptersContainer: {
 		marginBottom: 30
 	},
+	chapterContainer: {
+		marginBottom: 50
+	},
 	chapterName: {
 		marginBottom: 15
 	}
