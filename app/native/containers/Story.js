@@ -62,6 +62,13 @@ class Story extends Component {
 	}
 
 	render() {
+		let endMarker;
+		if (this.props.chapters.length == this.props.totalNumberOfChapters) {
+			endMarker = (
+				<View style={[Styles.endMarker]}></View>
+			);
+		}
+
 		return (
 			<Animatable.View animation={this.zoomAnimation} duration={400} style={[ Styles.flexOne, Styles.allCenter ]}>
 
@@ -78,6 +85,8 @@ class Story extends Component {
 					<View style={[ Styles.chaptersContainer, Styles.allCenter ]}>
 						{this._renderChapters()}
 					</View>
+
+					{endMarker}
 				</ScrollView>
 			</Animatable.View>
 		);

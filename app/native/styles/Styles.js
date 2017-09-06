@@ -71,5 +71,12 @@ export default Styles = StyleSheet.create( {
 	},
 	chapterName: {
 		marginBottom: 15
+	},
+	endMarker: {
+		alignSelf: 'center',
+		marginBottom: 20,
+		height: 3,
+		width: 250,
+		backgroundColor: 'rgba(255, 255, 255, 0.8)'
 	}
 } );
