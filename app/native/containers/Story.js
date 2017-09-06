@@ -2,50 +2,93 @@ import React, { Component } from 'react';
 import {
 	View,
 	Text,
-	FlatList,
+	Image,
+	ScrollView,
 } from 'react-native';
 import { connect } from 'react-redux';
+import * as Animatable from 'react-native-animatable';
 
+const _ = require( 'lodash' );
+
+import Styles from '../styles';
 import Chapter from '../components/Chapter';
 
 class Story extends Component {
 	constructor( props ) {
 		super( props );
+
+		this.zoomAnimation = {
+			0: {
+				opacity: 0,
+				scale: 0
+			},
+			1: {
+				opacity: 1,
+				scale: 1
+			}
+		};
 	}
 
 	_getNextChapter() {
 		this.props.getNextChapter();
 	}
 
-	_renderChapter( chapter ) {
-		return (
-			<Chapter />
-		);
+	_renderChapters() {
+		return _.map( this.props.chapters, ( chapter ) => {
+			return (
+				<View key={'chapter_' + chapter.chapterNumber} style={[ Styles.allCenter ]}>
+					<Text style={[ Styles.text, Styles.chapterName ]}>{chapter.name}</Text>
+					<Chapter text={chapter.text}/>
+				</View>
+			);
+		} );
+	}
+
+	_fetchNextChapter() {
+		if ( this.props.chapters.length < this.props.totalNumberOfChapters ) {
+			this.props.fetchNextChapter( this.props.storyId, this.props.chapters.length + 1 );
+		}
+	}
+
+	_whileReadingStory( { nativeEvent } ) {
+		const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+		const paddingToBottom = 100;
+		if ( layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom ) {
+			console.log( "while reading reached end:" );
+		}
 	}
 
 	render() {
+		console.log("cover url: " + this.props.cover)
 		return (
-			<View style={{ flex: 1 }}>
-				<View style={{ padding: 10 }}>
-					<Text style={{ fontSize: 24, fontWeight: 'bold' }}>{this.props.title}</Text>
-					<Text style={{ fontSize: 18 }}>{this.props.authorName}</Text>
-				</View>
+			<Animatable.View animation={this.zoomAnimation} duration={400} style={[ Styles.flexOne, Styles.allCenter ]}>
 
-				<FlatList data={this.props.chapters}
-					renderItem={this._renderChapter.bind( this )}
-					style={{ flex: 1 }} contentContainerStyle={{ padding: 10, textAlign: 'center' }}>
+				<ScrollView style={[ Styles.flexOne ]} contentContainerStyle={[ Styles.storyContainer ]}
+					showsVerticalScrollIndicator={false} onScroll={this._whileReadingStory.bind( this )}>
+					
+					<View style={[Styles.storyInfoContainer, Styles.allCenter]}>
+						<Image source={{uri: this.props.cover}} style={[Styles.storyImage]}/>
+						<Text style={[ Styles.text, Styles.boldText, Styles.storyTitle ]}>{this.props.title}</Text>
+						<Text style={[ Styles.text, Styles.storyAuthor ]}>{this.props.authorName}</Text>
+					</View>
 
-				</FlatList>
-			</View>
+					<View style={[ Styles.chaptersContainer, Styles.allCenter ]}>
+						{this._renderChapters()}
+					</View>
+				</ScrollView>
+			</Animatable.View>
 		);
 	}
 }
 
 function mapStateToProps( state ) {
 	return {
-		title: state.story.title,
-		authorName: state.story.author.name,
-		chapters: state.story.chapters
+		storyId: state.storyBeingRead.id,
+		cover: state.storyBeingRead.cover,
+		title: state.storyBeingRead.title,
+		authorName: state.storyBeingRead.author.name,
+		totalNumberOfChapters: state.storyBeingRead.chaptersCount,
+		chapters: state.storyBeingRead.chapters
 	};
 }
 

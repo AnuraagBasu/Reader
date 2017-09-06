@@ -22,7 +22,8 @@ export const stories = createReducer( {}, {
 					name: story.author.name,
 					image: story.author.small_profile_picture_url
 				},
-				cover: story.vertical_cover.iphone,
+				verticalCover: story.vertical_cover.iphone,
+				cover: story.cover.url,
 				chapters: []
 			};
 		} );
@@ -34,7 +35,7 @@ export const storyBeingRead = createReducer( {}, {
 		return _.find( action.payload.stories, { id: action.payload.storyIdToRead } );
 	},
 	[ types.SET_CHAPTER ]( state, action ) {
-		let allChapters = state.chapters;
+		let allChapters = _.cloneDeep(state.chapters);
 		let thisChapter = {
 			id: action.payload.chapter.id,
 			name: action.payload.chapter.name,

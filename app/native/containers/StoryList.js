@@ -4,6 +4,7 @@ import {
 	TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux';
+import * as Animatable from 'react-native-animatable';
 
 const _ = require( 'lodash' );
 
@@ -17,13 +18,16 @@ class StoryList extends Component {
 	}
 
 	_getStories() {
-		console.log( "styles is: " + Styles.flexOne );
-		return _.map( this.props.stories, ( story ) => {
+		return _.map( this.props.stories, ( story, index ) => {
+			let animationDuration = 400 + (200*index);
+
 			return (
-				<TouchableOpacity key={'story_' + story.id} style={[ Styles.flexOne, Styles.listItemWrapper ]}
-					activeOpacity={0.9} onPress={this._storyToReadSelected.bind( this, story.id )}>
-					<StoryPreview title={story.title} cover={story.cover} authorName={story.author.name} teaser={story.teaser} />
-				</TouchableOpacity>
+				<Animatable.View key={'story_' + story.id} animation={'fadeIn'} duration={animationDuration}>
+					<TouchableOpacity style={[ Styles.flexOne, Styles.listItemWrapper ]}
+						activeOpacity={0.9} onPress={this._storyToReadSelected.bind( this, story.id )}>
+						<StoryPreview title={story.title} cover={story.verticalCover} authorName={story.author.name} teaser={story.teaser} />
+					</TouchableOpacity>
+				</Animatable.View>
 			);
 		} );
 	}
@@ -34,7 +38,7 @@ class StoryList extends Component {
 
 	render() {
 		return (
-			<ScrollView style={[ Styles.flexOne, Styles.listContainer ]}>
+			<ScrollView style={[ Styles.flexOne ]} contentContainerStyle={[Styles.listContainer]} showsVerticalScrollIndicator={false}>
 				{this._getStories()}
 			</ScrollView>
 		);

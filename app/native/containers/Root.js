@@ -45,7 +45,7 @@ class Root extends Component {
 		}
 
 		return (
-			<View style={{ flex: 1, backgroundColor: '#424242' }}>
+			<View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.9)' }}>
 				{screen}
 			</View>
 		)
