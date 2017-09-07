@@ -32,6 +32,10 @@ class Root extends Component {
 		}
 	}
 
+	_browseStories () {
+		this.props.changeCurrentView('StoryList');
+	}
+
 	componentWillMount() {
 		this.props.fetchStories();
 	}
@@ -55,7 +59,15 @@ class Root extends Component {
 
 			case 'Story':
 				screen = (
-					<Story {...this.props} onChapterReadingEnd={this._fetchNextChapter.bind(this)}/>
+					<View style={[Styles.flexOne]}>
+						<View style={{backgroundColor: 'rgba(0, 0, 0, 0.4)', padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+							<TouchableOpacity activeOpacity={0.9} onPress={this._browseStories.bind(this)} style={{padding: 5, backgroundColor: 'rgba(0, 0, 0, 0.9)', marginRight: 10}}>
+								<Text style={[Styles.text, Styles.smallerText]}>BACK</Text>
+							</TouchableOpacity>
+							<Text numberOfLines={1} style={[Styles.text, Styles.boldText]}>{this.props.currentStoryName}</Text>
+						</View>
+						<Story {...this.props} onChapterReadingEnd={this._fetchNextChapter.bind(this)}/>
+					</View>
 				);
 				break;
 		}
@@ -76,6 +88,7 @@ function mapStateToProps( state ) {
 	return {
 		currentView: state.currentView,
 		currentStoryId: state.storyBeingRead.id,
+		currentStoryName: state.storyBeingRead.title,
 		totalChapters: state.storyBeingRead.chaptersCount,
 		chaptersAlreadyFetched: state.storyBeingRead.chapters ? state.storyBeingRead.chapters.length : 0,
 		loadStoriesInProgress: state.storiesLoading,

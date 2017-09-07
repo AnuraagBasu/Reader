@@ -78,8 +78,6 @@ class Story extends Component {
 					
 					<View style={[Styles.storyInfoContainer, Styles.allCenter]}>
 						<Image source={{uri: this.props.cover}} style={[Styles.storyImage]}/>
-						<Text style={[ Styles.text, Styles.boldText, Styles.storyTitle ]}>{this.props.title}</Text>
-						<Text style={[ Styles.text, Styles.storyAuthor ]}>{this.props.authorName}</Text>
 					</View>
 
 					<View style={[ Styles.chaptersContainer, Styles.allCenter ]}>
